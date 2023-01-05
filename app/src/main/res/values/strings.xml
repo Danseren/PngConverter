@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PngConverter</string>
+    <string name="btn_open_gallery">Open Gallery</string>
+    <string name="btn_convert_to_png">Convert to PNG</string>
 </resources>
