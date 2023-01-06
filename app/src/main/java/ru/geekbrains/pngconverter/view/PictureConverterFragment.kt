@@ -26,6 +26,7 @@ import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import ru.geekbrains.pngconverter.App
 import ru.geekbrains.pngconverter.databinding.FragmentPictureConverterBinding
+import ru.geekbrains.pngconverter.model.PictureRequest
 import ru.geekbrains.pngconverter.navigation.BackPressedListner
 import ru.geekbrains.pngconverter.presenter.PictureConverterPresenter
 import java.io.File
@@ -37,6 +38,10 @@ class PictureConverterFragment : MvpAppCompatFragment(), PictureView, BackPresse
     private val imageID = 1
     private var fileName = ""
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private var launcher = registerForActivityResult(PictureRequest()) { uri ->
+        fileName = uri.toString().split("/").last()
+        binding.imageView.load(uri)
+    }
 
     companion object {
         fun getInstance(): PictureConverterFragment {
@@ -70,27 +75,9 @@ class PictureConverterFragment : MvpAppCompatFragment(), PictureView, BackPresse
         initBtnConvert()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (resultCode == RESULT_OK) {
-
-            try {
-                val image = data?.data
-                fileName = image.toString().split("/").last()
-                binding.imageView.load(image)
-            } catch (e: java.lang.RuntimeException) {
-                e.printStackTrace()
-            }
-
-        }
-    }
-
     private fun initBtnGallery() {
         binding.btnGallery.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/png"
-            startActivityForResult(intent, imageID)
+            launcher.launch(imageID)
         }
     }
 
