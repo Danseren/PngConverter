@@ -13,6 +13,10 @@ class PictureConverterPresenter(
         viewState.init()
     }
 
+    fun showImageFromGallery() {
+
+    }
+
     fun onBackPressed(): Boolean {
         router.exit()
         return true
