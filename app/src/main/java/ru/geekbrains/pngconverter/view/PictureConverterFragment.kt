@@ -15,6 +15,7 @@ import ru.geekbrains.pngconverter.databinding.FragmentPictureConverterBinding
 import ru.geekbrains.pngconverter.model.PictureRequest
 import ru.geekbrains.pngconverter.navigation.BackPressedListner
 import ru.geekbrains.pngconverter.presenter.PictureConverterPresenter
+import ru.geekbrains.pngconverter.utils.ERROR_MESSAGE
 
 class PictureConverterFragment : MvpAppCompatFragment(), PictureView, BackPressedListner {
 
@@ -60,6 +61,7 @@ class PictureConverterFragment : MvpAppCompatFragment(), PictureView, BackPresse
     private fun initBtnGallery() {
         binding.btnGallery.setOnClickListener {
             launcher.launch(imageID)
+            binding.btnConvert.visibility = View.VISIBLE
         }
     }
 
@@ -75,12 +77,12 @@ class PictureConverterFragment : MvpAppCompatFragment(), PictureView, BackPresse
     override fun onBackPressed() = presenter.onBackPressed()
 
     override fun init() {
-        //TODO("Not yet implemented")
+        //nothing to do
     }
 
     override fun showImage(uri: Uri?) {
         if (uri != null) binding.imageView.load(uri)
-        else showError("Error")
+        else showError(ERROR_MESSAGE)
     }
 
     override fun showProgress() {

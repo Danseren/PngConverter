@@ -17,6 +17,10 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import moxy.MvpPresenter
 import ru.geekbrains.pngconverter.App
+import ru.geekbrains.pngconverter.utils.COMPRESS_QUALITY
+import ru.geekbrains.pngconverter.utils.ERROR_MESSAGE
+import ru.geekbrains.pngconverter.utils.FILE_NAME
+import ru.geekbrains.pngconverter.utils.SUCCESS_MESSAGE
 import ru.geekbrains.pngconverter.view.PictureView
 import java.io.File
 import java.io.FileOutputStream
@@ -42,14 +46,14 @@ class PictureConverterPresenter(
                 fileName = name
                 emitter.onComplete()
             } catch (e: IOException) {
-                emitter.onError(Throwable("Error"))
+                emitter.onError(Throwable(ERROR_MESSAGE))
             }
         }.subscribeOn(Schedulers.io()).subscribe(
             {
                 viewState.showImage(uri)
             },
             {
-                viewState.showError("Error")
+                viewState.showError(ERROR_MESSAGE)
             }
         )
     }
@@ -60,20 +64,20 @@ class PictureConverterPresenter(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val res = convertImageAfterQVersion(bitmap, contentResolver)
                 if (res) emitter.onComplete()
-                else emitter.onError(Throwable("Error"))
+                else emitter.onError(Throwable(ERROR_MESSAGE))
             } else {
                 val res = convertImageBeforeQVersion(bitmap)
                 if (res) emitter.onComplete()
-                else emitter.onError(Throwable("Error"))
+                else emitter.onError(Throwable(ERROR_MESSAGE))
             }
         }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    viewState.showInfo("Success")
+                    viewState.showInfo(SUCCESS_MESSAGE)
                 },
                 {
-                    viewState.showError("Error")
+                    viewState.showError(ERROR_MESSAGE)
                 }
             )
     }
@@ -103,7 +107,7 @@ class PictureConverterPresenter(
             }
 
             outputStream?.use {
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+                bitmap.compress(Bitmap.CompressFormat.PNG, COMPRESS_QUALITY, it)
             }
 
             contentValues.clear()
@@ -127,9 +131,9 @@ class PictureConverterPresenter(
         try {
             val directory =
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-            val file = File(directory, "Name")
+            val file = File(directory, FILE_NAME)
             val outputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            bitmap.compress(Bitmap.CompressFormat.PNG, COMPRESS_QUALITY, outputStream)
             outputStream.flush()
             outputStream.close()
             MediaScannerConnection.scanFile(
