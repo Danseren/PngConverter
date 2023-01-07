@@ -1,5 +1,6 @@
 package ru.geekbrains.pngconverter.view
 
+import android.net.Uri
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
@@ -8,5 +9,8 @@ import moxy.viewstate.strategy.StateStrategyType
 interface PictureView: MvpView {
 
     fun init()
-    fun update()
+    fun showImage(uri: Uri?)
+    fun showProgress()
+    fun showInfo(message: String)
+    fun showError(message: String)
 }
